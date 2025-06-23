@@ -1,0 +1,62 @@
+services:
+  db:
+    container_name: postgres_weather_data
+    image: postgres:15.13
+    environment:
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_password
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/airflow_init.sql:/docker-entrypoint-initdb.d/airflow_init.sql
+    networks:
+      - my_network
+
+
+  af:
+    container_name: airflow_weather_data
+    image: apache/airflow:3.0.2
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@db:5432/airflow_db
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./api_request:/opt/airflow/api_request
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      - 1001
+    networks:
+      - my_network
+    command: >
+      bash -c "sleep 10 && airflow db migrate && airflow standalone"
+
+
+
+  # dbt:
+  #     container_name: dbt_weather_data
+  #     image: ghcr.io/dbt-labs/dbt-postgres:1.9.latest 
+  #     environment:
+  #       DBT_PROFILE_DIR: /root/.dbt
+
+
+  #     volumes:
+  #       - ./dbt/my_project:/usr/app
+  #       - ./dbt:/root/.dbt
+  #     working_dir: /usr/app
+  #     depends_on:
+  #       - db
+  #     networks:
+  #       - my_network
+  #     command: run  
+
+
+networks:
+  my_network:
+      driver: bridge
+
+
