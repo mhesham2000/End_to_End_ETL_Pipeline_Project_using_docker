@@ -24,3 +24,6 @@ ETL pipeline that extracts weather data from a public API using Python, loads it
                         [PostgreSQL (data marts)]
                                  ↓
                              [Airflow DAGs]
+```
+## How to run
+    docker compose up af
