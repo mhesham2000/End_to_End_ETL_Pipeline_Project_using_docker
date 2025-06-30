@@ -4,6 +4,8 @@ ETL pipeline that extracts weather data from a public API using Python, loads it
 
 ---
 
+![Image](https://github.com/user-attachments/assets/4e100ab5-9190-4c51-9475-1b36b3016321)
+
 ## Features
 
 - Extracts real-time weather data using Python
